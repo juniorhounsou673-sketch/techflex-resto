@@ -27,6 +27,11 @@ RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cac
 EXPOSE 8080
 
 # Au démarrage : migrer la base puis lancer le serveur
-CMD php artisan config:cache && \
+CMD php artisan config:clear && \
+    echo "Config nettoyée" && \
+    sleep 10 && \
+    echo "Tentative de connexion a la base..." && \
     php artisan migrate --force && \
-    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+    echo "Migration terminée" && \
+    echo "Démarrage du serveur sur le port $PORT" && \
+    php artisan serve --host=0.0.0.0 --port=$PORT
