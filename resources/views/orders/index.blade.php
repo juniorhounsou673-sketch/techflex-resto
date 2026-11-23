@@ -24,7 +24,7 @@
                         <td>{{ $order->created_at->format('d/m/Y H:i') }}</td>
                         <td>{{ number_format($order->total_amount, 0, ',', ' ') }} FCFA</td>
                         <td>
-                            <span class="badge bg-warning">{{ ucfirst($order->status) }}</span>
+                            <span class="badge {{ $order->statusBadge() }}">{{ $order->statusLabel() }}</span>
                         </td>
                         <td>
                             <a href="{{ route('orders.show', $order) }}" class="btn btn-sm btn-outline-danger">

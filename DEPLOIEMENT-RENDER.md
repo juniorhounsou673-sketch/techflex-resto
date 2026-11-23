@@ -55,6 +55,27 @@ Le seeder est exécuté au premier démarrage :
 
 Le menu est déjà rempli (entrées, plats, desserts, boissons).
 
+## 6. Administration (commandes et utilisateurs seulement)
+
+La zone `/admin` est réservée au rôle `admin`. Elle contient uniquement :
+
+- **Tableau de bord** : nombre de commandes, à confirmer, en livraison,
+  livrées, clients et chiffre d’affaires.
+- **Commandes** : liste filtrable, fiche détaillée (articles, client, paiement),
+  confirmation d’une commande en attente, changement de statut
+  (`en attente → confirmée → en préparation → en cours de livraison → livrée`)
+  et suivi livraison (nom/téléphone du livreur, heure estimée, note).
+- **Utilisateurs** : liste des comptes du site et historique de leurs commandes.
+
+Un compte **admin ne peut pas commander** : le panier, la commande et le
+paiement lui sont interdits (boutons masqués et accès refusé côté serveur).
+Pour passer une commande, il faut créer ou utiliser un compte **client**
+(`jean@example.com` / `password`). Le paiement ne confirme plus automatiquement
+la commande : seule l’administration la confirme.
+
+Les gestionnaires du menu (catégories/plats) ont été retirés de l’administration
+comme demandé.
+
 ## Important à savoir
 
 - **Mise en veille** : sur le plan gratuit, Render éteint le service après
@@ -77,5 +98,6 @@ Le menu est déjà rempli (entrées, plats, desserts, boissons).
 2. Erreur `npm`/`vite` : le Dockerfile utilise bien `node:20-alpine`.
 3. Erreur `SQLSTATE` : vérifie que `DB_CONNECTION=sqlite` est bien présent dans
    les variables d’environnement du service.
-4. Erreur `APP_KEY` : dans **Environment**, clique sur **Generate** pour la
-   variable `APP_KEY`, puis **Manual Deploy → Deploy latest commit**.
+4. Erreur `APP_KEY` : la valeur doit être au format `base64:` suivi de 32
+   octets encodés. Ne clique pas sur **Generate** (Render génère une chaîne
+   incompatible avec Laravel). Le `render.yaml` contient déjà une valeur valide.

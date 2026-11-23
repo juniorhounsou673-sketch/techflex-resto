@@ -27,7 +27,7 @@
                 </div>
                 <div class="d-flex justify-content-between mb-2">
                     <span class="text-muted">Statut commande</span>
-                    <span class="badge bg-success px-3 py-2">Confirmée ✅</span>
+                    <span class="badge {{ $order->statusBadge() }} px-3 py-2">{{ $order->statusLabel() }}</span>
                 </div>
                 <div class="d-flex justify-content-between">
                     <span class="text-muted">Livraison</span>
@@ -38,7 +38,7 @@
 
         <div class="alert alert-warning">
             <i class="bi bi-clock"></i>
-            Votre commande est en cours de préparation. Temps estimé : <strong>30-45 minutes</strong>
+            Votre commande est <strong>en attente de confirmation</strong> par le restaurant. Le suivi de livraison sera mis à jour ici.
         </div>
 
         <div class="d-flex gap-2 justify-content-center">

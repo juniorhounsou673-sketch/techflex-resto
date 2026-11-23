@@ -21,6 +21,7 @@
                 </li>
             </ul>
             <ul class="navbar-nav">
+                @unless(auth()->check() && auth()->user()->isAdmin())
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('cart.index') }}">
                         <i class="bi bi-cart3"></i>
@@ -30,15 +31,21 @@
                         @endif
                     </a>
                 </li>
+                @endunless
                 @auth
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                         {{ auth()->user()->name }}
+                        @if(auth()->user()->isAdmin())
+                            <span class="badge bg-light text-danger">Admin</span>
+                        @endif
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="{{ route('orders.index') }}">Mes commandes</a></li>
                         @if(auth()->user()->isAdmin())
                             <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Administration</a></li>
+                            <li><span class="dropdown-item-text text-muted small">Un compte admin ne peut pas commander.</span></li>
+                        @else
+                            <li><a class="dropdown-item" href="{{ route('orders.index') }}">Mes commandes</a></li>
                         @endif
                         <li><hr class="dropdown-divider"></li>
                         <li>

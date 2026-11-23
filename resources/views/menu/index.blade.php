@@ -22,12 +22,14 @@
                     <p class="card-text text-muted small">{{ Str::limit($item->description, 80) }}</p>
                     <div class="d-flex justify-content-between align-items-center">
                         <strong class="text-success fs-5">{{ number_format($item->price, 0, ',', ' ') }} FCFA</strong>
+                        @unless(auth()->check() && auth()->user()->isAdmin())
                         <form method="POST" action="{{ route('cart.add', $item) }}">
                             @csrf
                             <button class="btn btn-danger btn-sm">
                                 <i class="bi bi-cart-plus"></i> Ajouter
                             </button>
                         </form>
+                        @endunless
                     </div>
                 </div>
             </div>
@@ -53,12 +55,14 @@
                     @endif
                     <div class="d-flex justify-content-between align-items-center mt-2">
                         <strong class="text-success">{{ number_format($item->price, 0, ',', ' ') }} FCFA</strong>
+                        @unless(auth()->check() && auth()->user()->isAdmin())
                         <form method="POST" action="{{ route('cart.add', $item) }}">
                             @csrf
                             <button class="btn btn-outline-danger btn-sm">
                                 <i class="bi bi-cart-plus"></i> Ajouter
                             </button>
                         </form>
+                        @endunless
                     </div>
                 </div>
             </div>

@@ -15,31 +15,41 @@
 </head>
 <body>
 <div class="d-flex">
-    <div id="sidebar" class="p-3">
+    <div id="sidebar" class="p-3 d-flex flex-column">
         <h5 class="text-white mb-4 fw-bold">🍽️ Admin Panel</h5>
         <nav class="nav flex-column gap-1">
             <a href="{{ route('admin.dashboard') }}" class="nav-link px-2 py-2">
-                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-            </a>
-            <a href="{{ route('admin.categories.index') }}" class="nav-link px-2 py-2">
-                <i class="bi bi-tags me-2"></i>Catégories
-            </a>
-            <a href="{{ route('admin.menu-items.index') }}" class="nav-link px-2 py-2">
-                <i class="bi bi-menu-button-wide me-2"></i>Plats du menu
+                <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
             </a>
             <a href="{{ route('admin.orders.index') }}" class="nav-link px-2 py-2">
                 <i class="bi bi-bag-check me-2"></i>Commandes
             </a>
-            <hr style="border-color: rgba(255,255,255,.2)">
-            <a href="{{ route('home') }}" class="nav-link px-2 py-2">
-                <i class="bi bi-arrow-left me-2"></i>Site public
+            <a href="{{ route('admin.users.index') }}" class="nav-link px-2 py-2">
+                <i class="bi bi-people me-2"></i>Utilisateurs
             </a>
         </nav>
+        <div class="mt-auto pt-4">
+            <div class="text-white-50 small mb-2 px-2">
+                Connecté : {{ auth()->user()->name }}
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button class="btn btn-outline-light btn-sm w-100" type="submit">
+                    <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+                </button>
+            </form>
+        </div>
     </div>
     <div id="content" class="p-4">
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show">
+                {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>
         @endif
