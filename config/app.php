@@ -52,7 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    // Render fournit son URL publique dans RENDER_EXTERNAL_URL : on l'utilise
+    // pour que les liens générés pointent vers le bon domaine en production.
+    'url' => env('RENDER_EXTERNAL_URL', env('APP_URL', 'http://localhost')),
 
     /*
     |--------------------------------------------------------------------------

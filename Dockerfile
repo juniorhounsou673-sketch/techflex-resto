@@ -1,37 +1,41 @@
+# ---------- Étape 1 : compilation des assets (Vite 7 demande Node 20+) ----------
+FROM node:20-alpine AS frontend
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# ---------- Étape 2 : application PHP ----------
 FROM php:8.2-cli
 
-# Dépendances système + extensions PHP nécessaires pour Laravel + MySQL
+# Extensions nécessaires : pdo_sqlite pour la base embarquée, pdo_mysql si tu
+# branches une base MySQL plus tard.
 RUN apt-get update && apt-get install -y \
-    git curl unzip libpng-dev libonig-dev libxml2-dev libzip-dev nodejs npm \
-    && docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd zip \
+    git curl unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
 
-# Installer Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /app
 
-# Copier tout le code
 COPY . .
+COPY --from=frontend /app/public/build /app/public/build
 
-# Installer les dépendances PHP (production)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && mkdir -p database storage/framework/sessions storage/framework/views \
+               storage/framework/cache/data storage/logs bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache database
 
-# Installer les dépendances JS et builder les assets (Vite/Tailwind)
-RUN npm install && npm run build
-
-# Permissions Laravel (storage / cache)
-RUN mkdir -p storage/framework/{sessions,views,cache} storage/logs bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
+ENV PORT=8080
 EXPOSE 8080
 
-# Au démarrage : migrer la base puis lancer le serveur
-CMD php artisan config:clear && \
-    echo "Config nettoyée" && \
-    sleep 10 && \
-    echo "Tentative de connexion a la base..." && \
+# Au démarrage : base SQLite locale, migrations, données de démo (une seule fois)
+# puis serveur HTTP sur le port fourni par Render.
+CMD touch database/database.sqlite && \
     php artisan migrate --force && \
-    echo "Migration terminée" && \
-    echo "Démarrage du serveur sur le port $PORT" && \
-    php artisan serve --host=0.0.0.0 --port=$PORT
+    (php artisan db:seed --force || true) && \
+    (php artisan storage:link || true) && \
+    php artisan serve --host=0.0.0.0 --port=${PORT:-8080}

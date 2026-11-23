@@ -1,0 +1,79 @@
+# Déploiement gratuit sur Render
+
+Le dépôt est prêt : `render.yaml` décrit le service et le `Dockerfile` construit
+l’application Laravel 12 (assets Vite avec Node 20, base SQLite locale).
+
+## 1. Créer le compte Render
+
+1. Va sur https://render.com/ puis **Sign Up**.
+2. Choisis **GitHub** et autorise Render à accéder à tes dépôts.
+3. Si Render ne voit pas `techflex-resto`, clique sur **Configure account**
+   et autorise l’accès à ce dépôt.
+
+## 2. Déployer en une fois (Blueprint)
+
+1. Dans le dashboard Render : **New +** → **Blueprint**.
+2. Sélectionne le dépôt `juniorhounsou673-sketch/techflex-resto`, branche `main`.
+3. Render lit `render.yaml` et affiche le service `techflex-resto`.
+4. Clique sur **Apply**.
+
+Le plan **Free** est utilisé (aucune carte bancaire demandée). La région est
+`Frankfurt`, la plus proche du Bénin.
+
+## 3. Attendre la première compilation
+
+La première fois, Render tire les images Docker, installe Composer et npm, puis
+compile les assets : compte environ **5 à 10 minutes**. Les déploiements suivants
+sont beaucoup plus rapides.
+
+Le suivi se fait dans l’onglet **Logs** du service. La fin attendue est :
+
+```
+Migration terminée
+Démarrage du serveur sur le port 10000
+```
+
+## 4. Ouvrir le site
+
+L’URL est affichée sur la page du service, de la forme :
+
+```
+https://techflex-resto.onrender.com
+```
+
+Si cette URL est déjà prise, Render en choisira une autre ; elle reste visible
+en haut de la page du service. La route `/up` sert de test de santé.
+
+## 5. Comptes de démonstration
+
+Le seeder est exécuté au premier démarrage :
+
+| Rôle | E-mail | Mot de passe |
+|---|---|---|
+| Admin | `admin@restaurant.com` | `password` |
+| Client | `jean@example.com` | `password` |
+
+Le menu est déjà rempli (entrées, plats, desserts, boissons).
+
+## Important à savoir
+
+- **Mise en veille** : sur le plan gratuit, Render éteint le service après
+  environ 15 minutes sans visite. La première visite suivante prend
+  30 à 60 secondes. C’est normal.
+- **Données** : la base SQLite est stockée dans le conteneur. Elle est donc
+  réinitialisée à chaque redéploiement ou redémarrage. Pour un vrai site avec
+  historique des commandes, il faudra ajouter une base PostgreSQL (gratuite
+  limitée dans le temps) et remplacer `DB_CONNECTION=sqlite` par `pgsql`.
+- **Clé APP_KEY** : générée automatiquement par Render (`generateValue: true`),
+  elle n’est pas stockée dans le dépôt.
+- **Modifier le code** : pousse sur `main`, Render redéploie automatiquement
+  (`autoDeploy: true`).
+
+## Si le déploiement échoue
+
+1. Ouvre **Logs** et cherche la première ligne rouge.
+2. Erreur `npm`/`vite` : le Dockerfile utilise bien `node:20-alpine`.
+3. Erreur `SQLSTATE` : vérifie que `DB_CONNECTION=sqlite` est bien présent dans
+   les variables d’environnement du service.
+4. Erreur `APP_KEY` : dans **Environment**, clique sur **Generate** pour la
+   variable `APP_KEY`, puis **Manual Deploy → Deploy latest commit**.
