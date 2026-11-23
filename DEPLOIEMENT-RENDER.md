@@ -64,8 +64,10 @@ Le menu est déjà rempli (entrées, plats, desserts, boissons).
   réinitialisée à chaque redéploiement ou redémarrage. Pour un vrai site avec
   historique des commandes, il faudra ajouter une base PostgreSQL (gratuite
   limitée dans le temps) et remplacer `DB_CONNECTION=sqlite` par `pgsql`.
-- **Clé APP_KEY** : générée automatiquement par Render (`generateValue: true`),
-  elle n’est pas stockée dans le dépôt.
+- **Clé APP_KEY** : Render génère une chaîne aléatoire qui n’est pas une clé
+  Laravel valide. Le `render.yaml` contient donc une clé au format attendu
+  (`base64:` + 32 octets). Pour un vrai site, régénère-la (`php artisan
+  key:generate`) et stocke-la dans une variable d’environnement secrète.
 - **Modifier le code** : pousse sur `main`, Render redéploie automatiquement
   (`autoDeploy: true`).
 
