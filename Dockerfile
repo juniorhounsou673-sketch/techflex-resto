@@ -13,7 +13,7 @@ FROM php:8.2-cli
 # Extensions nécessaires : pdo_sqlite pour la base embarquée, pdo_mysql si tu
 # branches une base MySQL plus tard.
 RUN apt-get update && apt-get install -y \
-    git curl unzip libpng-dev libonig-dev libxml2-dev libzip-dev \
+    git curl unzip libpng-dev libonig-dev libxml2-dev libzip-dev libsqlite3-dev \
     && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd zip \
     && rm -rf /var/lib/apt/lists/*
 
